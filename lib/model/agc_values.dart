@@ -25,7 +25,6 @@ class AgcValues {
   final double? led22;
   final double? led23;
   final double? led24;
-  final double? led25;
 
   AgcValues({
     this.timeStamp,
@@ -54,7 +53,6 @@ class AgcValues {
     this.led22,
     this.led23,
     this.led24,
-    this.led25
   });
 
   Map<String, dynamic> toMap() => {
@@ -84,6 +82,5 @@ class AgcValues {
     'led22': led22,
     'led23': led23,
     'led24': led24,
-    'led25': led25
   };
 }

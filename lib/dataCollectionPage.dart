@@ -64,6 +64,9 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
   int countMeasure = 0;
 
   List<String> measureLog = [];
+  List<String> simpleMeasureLog = [];
+  List<String> commentLog = [];
+  List<String> volumeLog = [];
   List<int> adcMeasureCount = [0, 0, 0, 0, 0, 0];
   List<int> agcMeasureCount = [0, 0, 0];
 
@@ -326,8 +329,6 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
         initialization = true;
       }
 
-
-
       if(patchState == 1 && msgString.contains("Return1")){
         setState(() {
           patchState = 2;
@@ -336,7 +337,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
           agcMsg.clear();
           write("agc");
         }
-        if(aORm == 2) write("So");
+        if(aORm == 2) write("So"); // 온도 저장 후 => Si
         if(aORm == 3){
           switch(_types){
             case PDTypes.power35:
@@ -512,13 +513,13 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
         }
       }
       //
-      if(patchState == 2 && msgString.contains("Tagc")){
+      if(patchState == 2 && msgString.contains("Tagc-B")){
         agcMeasureCount = [0,0,0];
 
-        agcMsg.add(msgString);
+        if(!msgString.contains("Tagc-B0")) agcMsg.add(msgString);
 
-        if(agcMsg.length % 42 == 0 && agcMsg.isNotEmpty){
-          var timeStampForDB = DateFormat("yyyy/MM/dd/HH/mm/ss/SSS").format(DateTime.now());
+        if(agcMsg.length % 20 == 0 && agcMsg.isNotEmpty){
+          var timeStampForDB = DateFormat("yyyy/MM/dd HH:mm:ss.SSS").format(DateTime.now());
           
           List<String> splitForCount = [];
 
@@ -533,32 +534,32 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
             print(x);
             print("=========================");
             print("original : ${double.parse(splitForCount[1].trim())}");
-            double two = (pow(10, (((((double.parse(splitForCount[2]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double three = (pow(10, (((((double.parse(splitForCount[3]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double four = (pow(10, (((((double.parse(splitForCount[4]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double five = (pow(10, (((((double.parse(splitForCount[5]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double six = (pow(10, (((((double.parse(splitForCount[6]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double seven = (pow(10, (((((double.parse(splitForCount[7]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double eight = (pow(10, (((((double.parse(splitForCount[8]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double nine = (pow(10, (((((double.parse(splitForCount[9]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double ten = (pow(10, (((((double.parse(splitForCount[10]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double two = double.parse(splitForCount[2]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[2]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double three = double.parse(splitForCount[3]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[3]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double four = double.parse(splitForCount[4]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[4]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double five = double.parse(splitForCount[5]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[5]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double six = double.parse(splitForCount[6]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[6]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double seven = double.parse(splitForCount[7]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[7]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double eight = double.parse(splitForCount[8]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[8]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double nine = double.parse(splitForCount[9]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[9]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double ten = double.parse(splitForCount[10]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[10]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
 
-            double el = (pow(10, (((((double.parse(splitForCount[11]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double tw = (pow(10, (((((double.parse(splitForCount[12]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double tht = (pow(10, (((((double.parse(splitForCount[13]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double fourT = (pow(10, (((((double.parse(splitForCount[14]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double fifthT = (pow(10, (((((double.parse(splitForCount[15]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double sixthT = (pow(10, (((((double.parse(splitForCount[16]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double sevenT = (pow(10, (((((double.parse(splitForCount[17]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double eightT = (pow(10, (((((double.parse(splitForCount[18]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double nineT = (pow(10, (((((double.parse(splitForCount[19]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double el = double.parse(splitForCount[11]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[11]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double tw = double.parse(splitForCount[12]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[12]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double tht = double.parse(splitForCount[13]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[13]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double fourT = double.parse(splitForCount[14]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[14]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double fifthT = double.parse(splitForCount[15]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[15]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double sixthT = double.parse(splitForCount[16]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[16]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double sevenT = double.parse(splitForCount[17]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[17]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double eightT = double.parse(splitForCount[18]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[18]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double nineT = double.parse(splitForCount[19]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[19]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
 
-            double twenty = (pow(10, (((((double.parse(splitForCount[20]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double twentyO = (pow(10, (((((double.parse(splitForCount[21]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double twentyTwo = (pow(10, (((((double.parse(splitForCount[22]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double twentyThree = (pow(10, (((((double.parse(splitForCount[23]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double twentyFour = (pow(10, (((((double.parse(splitForCount[24]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
-            double twentyFive = (pow(10, (((((double.parse(splitForCount[25]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double twenty = double.parse(splitForCount[20]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[20]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double twentyO = double.parse(splitForCount[21]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[21]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double twentyTwo = double.parse(splitForCount[22]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[22]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double twentyThree = double.parse(splitForCount[23]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[23]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double twentyFour = double.parse(splitForCount[24]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[24]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
+            double twentyFive = double.parse(splitForCount[25]) == 0 ? 0 : (pow(10, (((((double.parse(splitForCount[25]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
 
             // 총 25개
             if(twentyFive >= 1 && twentyFive < 10000) agcMeasureCount[0]++; if(twentyFive >= 0 && twentyFive < 0.5) agcMeasureCount[1]++; if(twentyFive >= 0.5 && twentyFive < 1) agcMeasureCount[2]++;
@@ -610,7 +611,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
         tjMsg.add(msgString);
 
         if(tjMsg.length % 24 == 0 && tjMsg.isNotEmpty){
-          var timeStampForDB = DateFormat("yyyy/MM/dd/HH/mm/ss/SSS").format(DateTime.now());
+          var timeStampForDB = DateFormat("yyyy/MM/dd HH:mm:ss.SSS").format(DateTime.now());
 
           bool lockInIssue = false;
           List<String> split = [];
@@ -619,10 +620,10 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
           measureLog.add(timeStampForDB);
           String selectedPdType="initial";
 
-          if(_types == PDTypes.power35) selectedPdType = "power35";
-          if(_types == PDTypes.power20) selectedPdType = "power20";
-          if(_types == PDTypes.power10) selectedPdType = "power10";
-          if(_types == PDTypes.power5) selectedPdType = "power5";
+          if(_types == PDTypes.power35) selectedPdType = "35mV";
+          if(_types == PDTypes.power20) selectedPdType = "20mV";
+          if(_types == PDTypes.power10) selectedPdType = "10mV";
+          if(_types == PDTypes.power5) selectedPdType = "5mV";
 
           for(var x in tjMsg){
             splitForCount = x.split(",");
@@ -733,9 +734,12 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
               countMeasure++;
             });
             adcMeasureCount = [0,0,0,0,0,0];
-            write("Si");
+            write("St");
           } else {
             setState(() {
+              var simpleTimeStamp = DateFormat("HH:mm").format(DateTime.now());
+
+              simpleMeasureLog.add(simpleTimeStamp);
               aORm = 0;
               patchState = 0;
               countMeasure = 0;
@@ -871,6 +875,8 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
                     write("St");
                     commentTextController.clear();
                     volumeTextController.clear();
+                    commentLog.add(comment);
+                    volumeLog.add(volume.toString());
                     Navigator.pop(context);
                   },
                   child: const Text('Ok'),
@@ -902,7 +908,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
             });
             write("St");
           },
-          title: const Text("Power35"),
+          title: const Text("35mV"),
         ),
 
         RadioListTile<PDTypes>(
@@ -915,7 +921,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
             });
             write("St");
           },
-          title: const Text("Power20"),
+          title: const Text("20mV"),
         ),
 
         RadioListTile<PDTypes>(
@@ -928,7 +934,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
             });
             write("St");
           },
-          title: const Text("Power10"),
+          title: const Text("10mV"),
         ),
 
         RadioListTile<PDTypes>(
@@ -941,7 +947,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
             });
             write("St");
           },
-          title: const Text("Power5"),
+          title: const Text("5mV"),
         ),
       ],
     );
@@ -965,9 +971,20 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
         title: const Text("Data Collecting", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18,),),
         elevation: 1.0,
         backgroundColor: Colors.white,
-        centerTitle: false,
+        centerTitle: true,
         toolbarHeight: 80,
         automaticallyImplyLeading: false,
+        leading: TextButton(
+          child: const Text("Other patch", style: TextStyle(color: Colors.blueAccent),),
+          onPressed: () {
+            write("Sr").then((_){
+              device.disconnect().then((_){
+                Navigator.pop(context);
+              });
+            });
+          },
+        ),
+        leadingWidth: 90,
         actions: [
           const Icon(Icons.bolt_rounded, color: Colors.greenAccent),
           Text("$battery%", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
@@ -980,14 +997,15 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
           SingleChildScrollView(
             child: Column(
               children: [
-                ledPdSet? Container() : const SizedBox(height: 30,),
+                const SizedBox(height: 20,),
 
-                ledPdSet? Container() : selectingTypes(),
+                ledPdSet? Text("Power: ${_types.toString().replaceAll("PDTypes.power", "")}mV\n--------------------------------------------\nSoft Rebooted $countReboot times", style: const TextStyle(fontSize: 18,), textAlign: TextAlign.center,)
+                    : selectingTypes(),
 
-                const SizedBox(height: 30,),
+                const SizedBox(height: 15,),
 
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.9,
+                  width: MediaQuery.of(context).size.width * 0.8,
                   height: MediaQuery.of(context).size.height * 0.1,
                   child: !measuredAgc?
                   FilledButton(
@@ -1014,11 +1032,11 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
                     ledPdSet? Padding(
                       padding: const EdgeInsets.only(top: 25.0),
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: MediaQuery.of(context).size.height * 0.08,
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        height: MediaQuery.of(context).size.height * 0.07,
                         child: FilledButton(
                           style: FilledButton.styleFrom(
-                            backgroundColor: const Color.fromRGBO(35, 31, 32, 1),
+                            backgroundColor: const Color(0xffBC7FCD),
                           ),
                           onPressed: (){
                             setState(() {
@@ -1026,27 +1044,27 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
                               ledPdSet = false;
                             });
                           },
-                          child: const Text("Power Reset", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                          child: const Text("Power Reset", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white), textAlign: TextAlign.center),
                         ),
                       ),
                     ) : Container(),
 
-                    const SizedBox(width: 10,),
+                    measuredAgc? const SizedBox(width: 40,) : Container(),
                     measuredAgc? Padding(
                       padding: const EdgeInsets.only(top: 25.0),
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: MediaQuery.of(context).size.height * 0.08,
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        height: MediaQuery.of(context).size.height * 0.07,
                         child: FilledButton(
                           style: FilledButton.styleFrom(
-                            backgroundColor: const Color.fromRGBO(35, 31, 32, 1),
+                            backgroundColor: const Color(0xff7469B6),
                           ),
                           onPressed: (){
                             setState(() {
                               measuredAgc = false;
                             });
                           },
-                          child: const Text("AGC AGAIN", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                          child: const Text("AGC AGAIN", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white), textAlign: TextAlign.center),
                         ),
                       ),
                     ) : Container(),
@@ -1057,7 +1075,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
 
                 !measuredAgc?
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.9,
+                  width: MediaQuery.of(context).size.width * 0.8,
                   height: MediaQuery.of(context).size.height * 0.1,
                   child: FilledButton(
                     style: FilledButton.styleFrom(
@@ -1068,7 +1086,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
                   ),
                 ):
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.9,
+                  width: MediaQuery.of(context).size.width * 0.8,
                   height: MediaQuery.of(context).size.height * 0.1,
                   child: FilledButton(
                     style: FilledButton.styleFrom(
@@ -1081,36 +1099,176 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
                   ),
                 ),
 
-                const SizedBox(height: 40,),
+                const SizedBox(height: 15,),
 
-                Text("Soft Rebooted $countReboot times", style: const TextStyle(fontSize: 18,),),
+                measuredAgc?
+                ExpansionTile(
+                  title: const Text("AGC Measurement"),
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      child: Table(
+                        border: TableBorder.all(),
+                        columnWidths: const {
+                          0: FixedColumnWidth(210),
+                          1: FlexColumnWidth(),
+                        },
+                        children: [
+                          TableRow(
+                            children: [
+                              Container(
+                                color: Colors.black12,
+                                height: 32,
+                                child: const Center(child: Text("1 <= AGC 1 < 10000", style: TextStyle(fontSize: 18,),)),
+                              ),
+                              SizedBox(
+                                height: 32,
+                                child: Center(child: Text("${agcMeasureCount[0]}", style: const TextStyle(fontSize: 18,))),
+                              ),
+                            ]
+                          ),
+                          TableRow(
+                            children: [
+                              Container(
+                                color: Colors.black12,
+                                height: 32,
+                                child: const Center(child: Text("0.5 <= AGC 0.5 < 1", style: TextStyle(fontSize: 18,),),),
+                              ),
+                              SizedBox(
+                                height: 32,
+                                child: Center(child: Text("${agcMeasureCount[2]}", style: const TextStyle(fontSize: 18,),)),
+                              ),
+                            ]
+                          ),
+                          TableRow(
+                            children: [
+                              Container(
+                                color: Colors.black12,
+                                height: 32,
+                                child: const Center(child: Text("0 <= AGC < 0.5", style: TextStyle(fontSize: 18,),)),
+                              ),
+                              SizedBox(
+                                height: 32,
+                                child: Center(child: Text("${agcMeasureCount[1]}", style: const TextStyle(fontSize: 18,),)),
+                              ),
+                            ]
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 15,),
+                  ],
+                ) : Container(),
 
-                const SizedBox(height: 20,),
+                measuredAgc?
+                ExpansionTile(
+                  title: const Text("ADC Measurement"),
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      child: Table(
+                        border: TableBorder.all(),
+                        columnWidths: const {
+                          0: FixedColumnWidth(210),
+                          1: FlexColumnWidth(),
+                        },
+                        children: [
+                          TableRow(
+                              children: [
+                                Container(
+                                  color: Colors.lightBlue.shade50,
+                                  height: 32,
+                                  child: const Center(child: Text("700 < ADC", style: TextStyle(fontSize: 18,),)),
+                                ),
+                                SizedBox(
+                                  height: 32,
+                                  child: Center(child: Text("${adcMeasureCount[0]}", style: const TextStyle(fontSize: 18,))),
+                                ),
+                              ]
+                          ),
+                          TableRow(
+                              children: [
+                                Container(
+                                  color: Colors.lightBlue.shade50,
+                                  height: 32,
+                                  child: const Center(child: Text("500 < ADC <=700", style: TextStyle(fontSize: 18,),),),
+                                ),
+                                SizedBox(
+                                  height: 32,
+                                  child: Center(child: Text("${adcMeasureCount[1]}", style: const TextStyle(fontSize: 18,),)),
+                                ),
+                              ]
+                          ),
+                          TableRow(
+                              children: [
+                                Container(
+                                  color: Colors.lightBlue.shade50,
+                                  height: 32,
+                                  child: const Center(child: Text("300 < ADC <= 500", style: TextStyle(fontSize: 18,),),),
+                                ),
+                                SizedBox(
+                                  height: 32,
+                                  child: Center(child: Text("${adcMeasureCount[2]}", style: const TextStyle(fontSize: 18,))),
+                                ),
+                              ]
+                          ),
+                          TableRow(
+                              children: [
+                                Container(
+                                  color: Colors.lightBlue.shade50,
+                                  height: 32,
+                                  child: const Center(child: Text("200 < ADC <= 300", style: TextStyle(fontSize: 18,),),),
+                                ),
+                                SizedBox(
+                                  height: 32,
+                                  child: Center(child: Text("${adcMeasureCount[3]}", style: const TextStyle(fontSize: 18,),)),
+                                ),
+                              ]
+                          ),
+                          TableRow(
+                              children: [
+                                Container(
+                                  color: Colors.lightBlue.shade50,
+                                  height: 32,
+                                  child: const Center(child: Text("100 <= ADC <= 200", style: TextStyle(fontSize: 18,),),),
+                                ),
+                                SizedBox(
+                                  height: 32,
+                                  child: Center(child: Text("${adcMeasureCount[4]}", style: const TextStyle(fontSize: 18,),)),
+                                ),
+                              ]
+                          ),
+                          TableRow(
+                              children: [
+                                Container(
+                                  color: Colors.lightBlue.shade50,
+                                  height: 32,
+                                  child: const Center(child: Text("ADC < 100", style: TextStyle(fontSize: 18,),),),
+                                ),
+                                SizedBox(
+                                  height: 32,
+                                  child: Center(child: Text("${adcMeasureCount[5]}", style: const TextStyle(fontSize: 18,),)),
+                                ),
+                              ]
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 15,),
+                  ],
+                ) : Container(),
 
-                Text("AGC 1 이상 10000 미만: ${agcMeasureCount[0] / 2.0}", style: const TextStyle(fontSize: 18,),),
-                Text("AGC 0.5 이상 1 미만: ${agcMeasureCount[2] / 2.0}", style: const TextStyle(fontSize: 18,),),
-                Text("AGC 0 이상 0.5 미만: ${agcMeasureCount[1] / 2.0}", style: const TextStyle(fontSize: 18,),),
-
-                const SizedBox(height: 20,),
-
-                Text("ADC above 700: ${adcMeasureCount[0]}", style: const TextStyle(fontSize: 18,),),
-                Text("ADC 500 초과 700 이하: ${adcMeasureCount[1]}", style: const TextStyle(fontSize: 18,),),
-                Text("ADC 300 초과 500 이하: ${adcMeasureCount[2]}", style: const TextStyle(fontSize: 18,),),
-                Text("ADC 200 초과 300 이하: ${adcMeasureCount[3]}", style: const TextStyle(fontSize: 18,),),
-                Text("ADC 100 이상 200 이하: ${adcMeasureCount[4]}", style: const TextStyle(fontSize: 18,),),
-                Text("ADC 100 미만: ${adcMeasureCount[5]}", style: const TextStyle(fontSize: 18,),),
-
-                const Divider(thickness: 2.0, height: 80,),
+                const Divider(thickness: 2.0, height: 10,),
 
                 Padding(
-                  padding: const EdgeInsets.only(left: 10, bottom: 20,),
+                  padding: const EdgeInsets.only(left: 10, bottom: 10,),
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Row(
                       children: [
                         const Icon(Icons.book),
                         const SizedBox(width: 10,),
-                        const Text("Measured Time", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25,),),
+                        const Text("Measured Time", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18,),),
                         IconButton(
                           onPressed: (){
                             sharing();
@@ -1122,7 +1280,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
                   ),
                 ),
 
-                measureLog.isNotEmpty?
+                simpleMeasureLog.isNotEmpty?
                 Padding(
                   padding: const EdgeInsets.only(left: 10,right: 10),
                   child: Container(
@@ -1130,16 +1288,16 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.black12,
                     ),
-                    height: 200,
+                    height: 150,
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 25, top: 25),
+                        padding: const EdgeInsets.only(left: 25, top: 15),
                         child: ListView.builder(
                             controller: _scrollController,
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
-                            itemCount: measureLog.length,
+                            itemCount: simpleMeasureLog.length,
                             reverse: true,
                             itemBuilder: (context, index){
                               return Column(
@@ -1147,13 +1305,14 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    measureLog[index],
-                                    style: const TextStyle(
-                                      fontSize: 20,
+                                    "T: ${simpleMeasureLog[index]} | V: ${volumeLog[index]} | C: ${commentLog[index]}",
+                                    style: TextStyle(
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
+                                      color: index % 2 == 0? Colors.blue : Colors.black,
                                     ),
                                   ),
-                                  const SizedBox(height: 15,),
+                                  const SizedBox(height: 10,),
                                 ],
                               );
                             }
@@ -1177,7 +1336,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
                 ),
                 // const Spacer(flex: 1,),
 
-                const SizedBox(height: 50,),
+                const Divider(thickness: 2.0, height: 80,),
 
                 ExpansionTile(
                   title: const Text('Command Manually'),
@@ -1210,7 +1369,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
 
                     const SizedBox(height: 20,),
 
-                    Text(msg.last),
+                    if(msg.isNotEmpty) Text(msg.last),
 
                     const SizedBox(height: 20,),
 
@@ -1234,7 +1393,7 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
                   ],
                 ),
 
-                const SizedBox(height: 50,),
+                const SizedBox(height: 90,),
               ],
             ),
           ),

@@ -20,7 +20,7 @@ class DatabaseUtil{
 
   initDB() async{
     print("[DB] init DB");
-    String path = p.join(await getDatabasesPath(), 'mediLight.db');
+    String path = p.join(await getDatabasesPath(), 'animalClinicalTest.db');
 
     return await openDatabase(
       path,
@@ -40,6 +40,7 @@ class DatabaseUtil{
     CREATE TABLE agc_values(
       timeStamp TEXT,
       LEDNUM TEXT,
+      
       led1 REAL,
       led2 REAL,
       led3 REAL,
@@ -64,7 +65,7 @@ class DatabaseUtil{
       led22 REAL,
       led23 REAL,
       led24 REAL,
-      led25 REAL,
+      
       PRIMARY KEY(timeStamp, LEDNUM)
       );
     ''');

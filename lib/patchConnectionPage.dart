@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
 
-import 'dataCollectionPage.dart';
-
 class PatchConnectionPage extends StatefulWidget {
   const PatchConnectionPage({super.key});
 
@@ -22,36 +20,30 @@ class _PatchConnectionPageState extends State<PatchConnectionPage> {
   bool _isScanning = false; // 초기값 false
 
   BLECommunication ble = BLECommunication();
-  late StreamSubscription<List<ScanResult>> _scanResultsSubscription; // Stream으로 받아오는 scan result list
-  final List<ScanResult> _scanResults = []; // FBP에서 제공하는 것 (ScanResult)
+  late StreamSubscription<bool> _isScanningSubscription; // Stream으로 bool 값을 가지는 state
 
   @override
   void initState() {
     super.initState();
-    ble.scanningListen();
+    _isScanningSubscription = FlutterBluePlus.isScanning.listen((state) { // is scanning 을 listen
+      _isScanning = state; // listen 해서 받아온 state 를 _isScanning 에 복사
+      if (mounted) { // mounted?
+        setState(() {}); // set state
+      }
+    });
     ble.scanningStart();
   }
 
   Widget buildScanButton(BuildContext context) {
     if (_isScanning) {
       return FloatingActionButton(
-        onPressed: (){
-          ble.scanningStop();
-          setState(() {
-            _isScanning = false;
-          });
-        },
+        onPressed: () => ble.scanningStop(),
         backgroundColor: Colors.red,
         child: const Icon(Icons.stop),
       );
     } else {
       return FloatingActionButton(
-        onPressed: (){
-          ble.scanningStart();
-          setState(() {
-            _isScanning = true;
-          });
-        },
+        onPressed: ()=> ble.scanningStart(),
         child: const Text("SCAN"),
       );
     }
@@ -88,6 +80,13 @@ class _PatchConnectionPageState extends State<PatchConnectionPage> {
       ),
     )
         .toList();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _isScanningSubscription.cancel();
   }
   @override
   Widget build(BuildContext context) {

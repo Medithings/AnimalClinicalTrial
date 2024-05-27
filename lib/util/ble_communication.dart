@@ -4,6 +4,7 @@ import 'package:animal_case_study/util/ble_etra.dart';
 import 'package:animal_case_study/util/ble_provider.dart';
 import 'package:animal_case_study/util/global_variable_setting.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
