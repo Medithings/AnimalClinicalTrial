@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:animal_case_study/model/measure_values.dart';
+import 'package:animal_case_study/model/measured_time.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 
 import '../model/agc_values.dart';
+import '../model/hafl_agc_values.dart';
 
 class DatabaseUtil{
   Database? _database;
@@ -20,7 +23,7 @@ class DatabaseUtil{
 
   initDB() async{
     print("[DB] init DB");
-    String path = p.join(await getDatabasesPath(), 'animalClinicalTest.db');
+    String path = p.join(await getDatabasesPath(), 'mtDatabase.db');
 
     return await openDatabase(
       path,
@@ -39,7 +42,8 @@ class DatabaseUtil{
     db.execute('''
     CREATE TABLE agc_values(
       timeStamp TEXT,
-      LEDNUM TEXT,
+      PDNUM TEXT,
+      gainType INT,
       
       led1 REAL,
       led2 REAL,
@@ -66,13 +70,30 @@ class DatabaseUtil{
       led23 REAL,
       led24 REAL,
       
-      PRIMARY KEY(timeStamp, LEDNUM)
+      PRIMARY KEY(timeStamp, PDNUM)
       );
     ''');
+
+    db.execute('''
+    CREATE TABLE halfAgc(
+      timeStamp TEXT,
+      PDNUM TEXT,
+      gainType INT,
+      
+      ledNum1 REAL,
+      ledNum2 REAL,
+      ledNum3 REAL,
+      ledNum4 REAL,
+      ledNum5 REAL,
+      ledNum6 REAL
+    );
+    '''
+    );
 
     db.execute(''' 
     CREATE TABLE measured(
       mTimeStamp TEXT,
+      gainType INT,
       bat INTEGER,
       temp REAL,
       acc_x REAL, acc_y REAL, acc_z REAL, gyr_x REAL, gyr_y REAL, gyr_z REAL,
@@ -122,6 +143,14 @@ class DatabaseUtil{
     );
   }
 
+  Future<void> insertingHalfAgc(HalfAgcValues item) async{
+    var db = await database;
+
+    await db.insert(
+        'halfAgc', item.toMap()
+    );
+  }
+
   Future<void> insertingMeasured(MeasuredValues item) async{
     var db = await database;
 
@@ -131,174 +160,24 @@ class DatabaseUtil{
     );
   }
 
-  Future<List<int>> countSevenHundred() async {
-    var db = await database;
-    String sqlQuery =
-    """SELECT count(*) from (SELECT * from measured order by mTimeStamp desc limit 1)
-    where 
-    LED1_PD5>700 and
-    LED1_PD6>700 and
-    LED1_PD7>700 and
-    LED1_PD8>700 and
-    LED1_PD9>700 and
-    LED1_PD10>700 and
-      LED2_PD5>700 and
-    LED2_PD6>700 and
-    LED2_PD7>700 and
-    LED2_PD8>700 and
-    LED2_PD9>700 and
-    LED2_PD10>700 and
-     LED3_PD5>700 and
-    LED3_PD6>700 and
-    LED3_PD7>700 and
-    LED3_PD8>700 and
-    LED3_PD9>700 and
-    LED3_PD10>700 and
-     LED4_PD5>700 and
-    LED4_PD6>700 and
-    LED4_PD7>700 and
-    LED4_PD8>700 and
-    LED4_PD9>700 and
-    LED4_PD10>700 and
-     LED5_PD5>700 and
-    LED5_PD6>700 and
-    LED5_PD7>700 and
-    LED5_PD8>700 and
-    LED5_PD9>700 and
-    LED5_PD10>700 and
-     LED6_PD5>700 and
-    LED6_PD6>700 and
-    LED6_PD7>700 and
-    LED6_PD8>700 and
-    LED6_PD9>700 and
-    LED6_PD10>700 and
-     LED7_PD6>700 and
-    LED7_PD5>700 and
-    LED7_PD4>700 and
-    LED7_PD3>700 and
-    LED7_PD2>700 and
-    LED7_PD1>700 and
-      LED8_PD6>700 and
-    LED8_PD5>700 and
-    LED8_PD4>700 and
-    LED8_PD3>700 and
-    LED8_PD2>700 and
-    LED8_PD1>700 and
-      LED9_PD6>700 and
-    LED9_PD5>700 and
-    LED9_PD4>700 and
-    LED9_PD3>700 and
-    LED9_PD2>700 and
-    LED9_PD1>700 and
-      LED10_PD6>700 and
-    LED10_PD5>700 and
-    LED10_PD4>700 and
-    LED10_PD3>700 and
-    LED10_PD2>700 and
-    LED10_PD1>700 and
-     LED11_PD6>700 and
-    LED11_PD5>700 and
-    LED11_PD4>700 and
-    LED11_PD3>700 and
-    LED11_PD2>700 and
-    LED11_PD1>700 and
-     LED12_PD6>700 and
-    LED12_PD5>700 and
-    LED12_PD4>700 and
-    LED12_PD3>700 and
-    LED12_PD2>700 and
-    LED12_PD1>700 and
-     LED13_PD15>700 and
-    LED13_PD16>700 and
-    LED13_PD17>700 and
-    LED13_PD18>700 and
-    LED13_PD19>700 and
-    LED13_PD20>700 and
-      LED14_PD15>700 and
-    LED14_PD16>700 and
-    LED14_PD17>700 and
-    LED14_PD18>700 and
-    LED14_PD19>700 and
-    LED14_PD20>700 and
-      LED15_PD15>700 and
-    LED15_PD16>700 and
-    LED15_PD17>700 and
-    LED15_PD18>700 and
-    LED15_PD19>700 and
-    LED15_PD20>700 and
-      LED16_PD15>700 and
-    LED16_PD16>700 and
-    LED16_PD17>700 and
-    LED16_PD18>700 and
-    LED16_PD19>700 and
-    LED16_PD20>700 and
-      LED17_PD15>700 and
-    LED17_PD16>700 and
-    LED17_PD17>700 and
-    LED17_PD18>700 and
-    LED17_PD19>700 and
-    LED17_PD20>700 and
-      LED18_PD15>700 and
-    LED18_PD16>700 and
-    LED18_PD17>700 and
-    LED18_PD18>700 and
-    LED18_PD19>700 and
-    LED18_PD20>700 and
-      LED19_PD16>700 and
-    LED19_PD15>700 and
-    LED19_PD14>700 and
-    LED19_PD13>700 and
-    LED19_PD12>700 and
-    LED19_PD11>700 and
-      LED20_PD16>700 and
-    LED20_PD15>700 and
-    LED20_PD14>700 and
-    LED20_PD13>700 and
-    LED20_PD12>700 and
-    LED20_PD11>700 and
-      LED21_PD16>700 and
-    LED21_PD15>700 and
-    LED21_PD14>700 and
-    LED21_PD13>700 and
-    LED21_PD12>700 and
-    LED21_PD11>700 and
-      LED22_PD16>700 and
-    LED22_PD15>700 and
-    LED22_PD14>700 and
-    LED22_PD13>700 and
-    LED22_PD12>700 and
-    LED22_PD11>700 and
-      LED23_PD16>700 and
-    LED23_PD15>700 and
-    LED23_PD14>700 and
-    LED23_PD13>700 and
-    LED23_PD12>700 and
-    LED23_PD11>700 and
-      LED24_PD16>700 and
-    LED24_PD15>700 and
-    LED24_PD14>700 and
-    LED24_PD13>700 and
-    LED24_PD12>700 and
-    LED24_PD11>700;
-    """;
-    final List<Map<String, dynamic>> map = await db.rawQuery(sqlQuery);
-
-    return List.generate(map.length, (index){
-      return int.parse(map[index]["count(*)"]);
-    });
+  void sharing() async {
+    String path = p.join(await getDatabasesPath(), 'mtDatabase.db');
+    Share.shareXFiles([XFile(path)],text: "Share Database", subject: "Database");
   }
 
-  Future<List<AgcValues>> getAgcValues() async{
+
+  Future<List<MeasuredTime>> groupByLog() async{
     var db = await database;
-    final List<Map<String, dynamic>> maps = await db.rawQuery("SELECT * FROM agc_values");
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery("SELECT mTimeStamp, volume, comment, gainType FROM measured GROUP BY mTimeStamp, volume, comment, gainType ORDER BY mTimeStamp DESC");
 
     return List.generate(maps.length, (index){
-     return AgcValues(
-       timeStamp: maps[index]["timeStamp"] as String,
-       lednum: maps[index]["LEDNUM"] as String,
-       led1: maps[index]["led1"] as double,
-       led2: maps[index]["led1"] as double,
-     );
+      return MeasuredTime(
+        timeStamp: maps[index]['mTimeStamp'],
+        volume: maps[index]['volume'] as int,
+        comment: maps[index]['comment'],
+        gainType: maps[index]['gainType'] as int
+      );
     });
   }
 }

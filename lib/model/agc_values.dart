@@ -1,6 +1,8 @@
 class AgcValues {
   final String? timeStamp;
-  final String? lednum;
+  final String? PDNUM;
+  final int? gainType;
+
   final double? led1;
   final double? led2;
   final double? led3;
@@ -28,7 +30,8 @@ class AgcValues {
 
   AgcValues({
     this.timeStamp,
-    this.lednum,
+    this.PDNUM,
+    this.gainType,
     this.led1,
     this.led2,
     this.led3,
@@ -57,7 +60,8 @@ class AgcValues {
 
   Map<String, dynamic> toMap() => {
     'timeStamp': timeStamp,
-    'lednum': lednum,
+    'PDNUM': PDNUM,
+    'gainType': gainType,
     'led1': led1,
     'led2': led2,
     'led3': led3,

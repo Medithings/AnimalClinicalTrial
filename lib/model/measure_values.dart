@@ -1,5 +1,6 @@
 class MeasuredValues{
   final String? mTimeStamp;
+  final int? gainType;
   final int? bat;
   final double? temp;
   final double? acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z;
@@ -38,6 +39,7 @@ class MeasuredValues{
 
   MeasuredValues({
     this.mTimeStamp,
+    this.gainType,
     this.bat,
     this.temp,
     this.acc_x, this.acc_y, this.acc_z, this.gyr_x, this.gyr_y, this.gyr_z,
@@ -76,6 +78,7 @@ class MeasuredValues{
 
   Map<String, dynamic> toMap() => {
     "mTimeStamp":mTimeStamp,
+    "gainType": gainType,
     "bat":bat,
     "temp":temp,
     "acc_x":acc_x, "acc_y":acc_y, "acc_z":acc_z, "gyr_x":gyr_x, "gyr_y":gyr_y, "gyr_z":gyr_z,

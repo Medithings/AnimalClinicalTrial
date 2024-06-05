@@ -32,6 +32,7 @@ class _PatchConnectionPageState extends State<PatchConnectionPage> {
       }
     });
     ble.scanningStart();
+    ble.scanningListen();
   }
 
   Widget buildScanButton(BuildContext context) {

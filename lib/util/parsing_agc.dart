@@ -3,12 +3,12 @@ import 'dart:math';
 import '../model/agc_values.dart';
 import 'database_util.dart';
 
-void  ParsingAGC(String getTimeStamp, List<String> gain) async{
+void  ParsingAGC(String getTimeStamp, List<String> gain, int getGainType) async{
   final model = DatabaseUtil();
   model.database;
 
   List<String> splitted;
-  String? ledNum;
+  String? PDNUM;
 
   double? led2;
   double? led3;
@@ -37,7 +37,7 @@ void  ParsingAGC(String getTimeStamp, List<String> gain) async{
 
   for(var x in gain){
     splitted = x.split(",");
-    ledNum = splitted[0].trim();
+    PDNUM = splitted[0].trim();
     // led1 = double.parse(splitted[1]) == 0 ? 0 : (pow(10, (((((double.parse(splitted[1]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
     led2 = double.parse(splitted[2]) == 0 ? 0 : (pow(10, (((((double.parse(splitted[2]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
     led3 = double.parse(splitted[3]) == 0 ? 0 : (pow(10, (((((double.parse(splitted[3]) * 3.3)/4095) * -80.0) + 88) / 20))).toDouble();
@@ -66,7 +66,8 @@ void  ParsingAGC(String getTimeStamp, List<String> gain) async{
 
     await model.insertingAGC(AgcValues(
       timeStamp: getTimeStamp,
-      lednum: ledNum,
+      PDNUM: PDNUM,
+      gainType: getGainType,
       led1: led2,
       led2: led3,
       led3: led4,

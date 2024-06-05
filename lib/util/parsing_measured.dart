@@ -1,7 +1,7 @@
 import 'package:animal_case_study/model/measure_values.dart';
 import 'package:animal_case_study/util/database_util.dart';
 
-void parsingMeasured(String mTimeStamp, int bat, double temp, double accX, double accY, double accZ, double gyrX, double gyrY, double gyrZ, String comment, int volume, String power, List<String> tjMsg) async {
+void parsingMeasured(String mTimeStamp, int gainType, int bat, double temp, double accX, double accY, double accZ, double gyrX, double gyrY, double gyrZ, String comment, int volume, String power, List<String> tjMsg) async {
 
   final model = DatabaseUtil();
   model.database;
@@ -276,6 +276,7 @@ void parsingMeasured(String mTimeStamp, int bat, double temp, double accX, doubl
 
   await model.insertingMeasured(MeasuredValues(
     mTimeStamp: mTimeStamp,
+    gainType: gainType,
     bat: bat,
     temp: temp,
     acc_x: accX,

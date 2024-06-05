@@ -4,7 +4,6 @@ import 'package:animal_case_study/util/ble_etra.dart';
 import 'package:animal_case_study/util/ble_provider.dart';
 import 'package:animal_case_study/util/global_variable_setting.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
@@ -60,7 +59,7 @@ class BLECommunication{
       int divisor = Platform.isAndroid ? 8 : 1;
       _scanResults.clear();
       context!.read<BLEProvider>().scanResult.clear();
-      if(Platform.isAndroid)await FlutterBluePlus.startScan(timeout: const Duration(seconds: 10), continuousUpdates: true, continuousDivisor: divisor);
+      await FlutterBluePlus.startScan(timeout: const Duration(seconds: 10), continuousUpdates: true, continuousDivisor: divisor);
     } catch(e){
       print("[ERR]: BLE scanning error\n[ERR MSG]: $e");
     }

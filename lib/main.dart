@@ -2,6 +2,7 @@ import 'package:animal_case_study/patchConnectionPage.dart';
 import 'package:animal_case_study/util/ble_provider.dart';
 import 'package:animal_case_study/util/database_util.dart';
 import 'package:animal_case_study/util/global_variable_setting.dart';
+import 'package:animal_case_study/util/shared_preference_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ Future<void> main() async {
   final db = DatabaseUtil();
   print("db get database");
   await db.database;
+  await SharedPrefsUtil().init();
 
   runApp(
     MultiProvider(
